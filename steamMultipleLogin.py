@@ -4,6 +4,7 @@ import subprocess
 import functools
 import sys
 from tkinter import simpledialog
+import webbrowser
 
 program_name = 'steamMultiAccount'
 program_version = '2.0'
@@ -54,6 +55,9 @@ def redemarrer_prog():
 def about():
 	tk.messagebox.showinfo("A propos", "Programme par CRIPSO\nsteamcommunity.com/id/CripsoCS")
 
+def checkForUpdates():
+	webbrowser.open('https://github.com/cripsoo/steamMultiAccount/releases')
+
 # Menu bar
 menubar = tk.Menu(root)
 
@@ -64,6 +68,7 @@ menubar.add_command(label = "Supprimer un compte", command=supprimerCompte)
 	# Aide
 menu_aide = tk.Menu(menubar, tearoff = 0)
 menu_aide.add_command(label="Actualiser",command=redemarrer_prog)
+menu_aide.add_command(label="Mise à jour",command=checkForUpdates)
 menu_aide.add_command(label="A propos",command=about)
 menubar.add_cascade(label="Aide", menu=menu_aide)
 
