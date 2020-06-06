@@ -5,6 +5,8 @@ import functools
 import sys
 from tkinter import simpledialog
 import webbrowser
+import cryptography
+from cryptography.fernet import Fernet
 
 program_name = 'steamMultiAccount'
 program_version = '2.0'
@@ -22,21 +24,15 @@ fenetre.pack()
 # Fonctions
 def connexion(compte,mdp):
 	subprocess.call('taskkill /IM "Steam.exe" /F')
-	subprocess.run(f'cd {steam_path} & start steam.exe -login "{compte}" "{mdp}"',shell=True)
-
-def lire(file):
-	f = open(file, "r")
-	txt = f.read()
-	f.close()
-	return txt
+	subprocess.run(f'cd {steam_path} & start steam.exe -login "{compte}" "{mdp}" -silent',shell=True)
 
 def ajouterCompte():
 	user_input = simpledialog.askstring('Ajouter un compte','identifiant:motdepasse')
 	if user_input != None:
 		if user_input != '' and ':' in user_input:
 			nom_fichier = user_input.split(':',1)[0]
-			f = open(f'acc-{nom_fichier}.txt',"x")
-			f.write(user_input)
+			f = open(f'acc-{nom_fichier}.txt',"wb")
+			f.write(encrypt(user_input))
 			f.close()
 			redemarrer_prog()
 
@@ -57,6 +53,32 @@ def about():
 
 def checkForUpdates():
 	webbrowser.open('https://github.com/cripsoo/steamMultiAccount/releases')
+
+	#Encryption
+def createKey():
+	key = Fernet.generate_key()
+
+	file = open('doNotDelete.needed', 'wb')
+	file.write(key)
+	file.close()
+
+def readKey():
+	file = open('doNotDelete.needed','rb')
+	key = file.read()
+	file.close()
+	return key
+
+def encrypt(data):
+	data = str.encode(data) #On veut des btyes et non un string
+	return Fernet(key).encrypt(data)
+
+def decrypt(file):
+	with open(file,'rb') as f:
+		data = f.read()
+
+	data = Fernet(key).decrypt(data)
+
+	return data.decode('utf-8')
 
 # Menu bar
 menubar = tk.Menu(root)
@@ -82,11 +104,16 @@ HAUTEUR = 30
 src = ".\\"
 files = os.listdir(src)
 
+if 'doNotDelete.needed' not in files:
+	createKey()
+
+key = readKey()
+
 for file in files:
 
 	if 'acc-' in file and os.path.splitext(file)[1] == '.txt':
 		#On ajoute le bouton du compte
-		identifiants = lire(file).split(':',1) #on récupère [id,mdp] depuis le fichier texte avec id:mdp
+		identifiants = decrypt(file).split(':',1) #on récupère [id,mdp] depuis le fichier texte avec id:mdp
 		nom_bouton = os.path.splitext(file)[0].replace('acc-','')
 
 		fenetre.create_window(170, HAUTEUR, window=tk.Button(root, text=nom_bouton, width = 52, activebackground='#b3b2b1', font='Courrier 12 bold',command=functools.partial(connexion,identifiants[0],identifiants[1])).pack())
