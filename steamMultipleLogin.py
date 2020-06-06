@@ -24,7 +24,7 @@ fenetre.pack()
 # Fonctions
 def connexion(compte,mdp):
 	subprocess.call('taskkill /IM "Steam.exe" /F')
-	subprocess.run(f'cd {steam_path} & start steam.exe -login "{compte}" "{mdp}" -silent',shell=True)
+	subprocess.run(f'cd {steam_path} & start steam.exe -login "{compte}" "{mdp}"',shell=True)
 
 def ajouterCompte():
 	user_input = simpledialog.askstring('Ajouter un compte','identifiant:motdepasse')
