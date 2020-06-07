@@ -1,5 +1,5 @@
 # steamMultiAccount
-**Quick-login onto multiple steam accouts in one click.**
+**Quick-login onto multiple steam accouts in one click.**  
 Have many accounts ? Multiple smurfs ? Switch between them in a single click
 
 ## Features
