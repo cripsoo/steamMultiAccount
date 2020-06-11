@@ -46,7 +46,7 @@ def redemarrer_prog():
     python = sys.executable
     script = os.path.realpath(__file__)
     subprocess.Popen([python, script])
-    os.execl(python, python, * sys.argv)
+    root.quit()
 
 def about():
 	tk.messagebox.showinfo("A propos", "Programme par CRIPSO\nsteamcommunity.com/id/CripsoCS")
